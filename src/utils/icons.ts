@@ -1,5 +1,17 @@
 // SVG icons designed in Google Material Design style matching Google Drive
 
+const SAFE_COLOR_REGEX = /^(#[0-9a-fA-F]{3,8}|rgb\(\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*\d{1,3}\s*\))$/;
+
+/**
+ * Validates a CSS color string to prevent attribute injection into inline SVGs.
+ */
+export function sanitizeColor(color?: string): string {
+  if (color && SAFE_COLOR_REGEX.test(color.trim())) {
+    return color.trim();
+  }
+  return '#5f6368';
+}
+
 export const ICONS = {
   // Pushpin Outline (Unpinned state)
   pinOutline: `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -13,7 +25,7 @@ export const ICONS = {
   </svg>`,
 
   // Folder Icon (Drive Gray or custom folder color)
-  folder: (color: string = '#5f6368') => `<svg viewBox="0 0 24 24" width="20" height="20" fill="${color}">
+  folder: (color: string = '#5f6368') => `<svg viewBox="0 0 24 24" width="20" height="20" fill="${sanitizeColor(color)}">
     <path d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/>
   </svg>`,
 

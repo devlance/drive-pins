@@ -2,7 +2,7 @@ import { PinItem } from '../types';
 import { StorageService } from '../storage';
 import { ICONS, getItemIcon } from '../utils/icons';
 import { getAccountFromUrl } from '../utils/account';
-import { cleanTitle } from '../utils/dom';
+import { cleanTitle, isSafeDriveUrl } from '../utils/dom';
 
 let currentAccountKey = 'u0';
 let allPins: PinItem[] = [];
@@ -167,7 +167,10 @@ function createPinRow(pin: PinItem): HTMLElement {
   const icon = document.createElement('span');
   icon.className = 'pin-icon';
   if (pin.emoji) {
-    icon.innerHTML = `<span style="font-size: 16px;">${pin.emoji}</span>`;
+    const emojiSpan = document.createElement('span');
+    emojiSpan.style.fontSize = '16px';
+    emojiSpan.textContent = pin.emoji;
+    icon.appendChild(emojiSpan);
   } else {
     icon.innerHTML = getItemIcon(pin.type, pin.mimeType, pin.color, pin.title, pin.url);
   }
@@ -228,6 +231,10 @@ function createPinRow(pin: PinItem): HTMLElement {
  * Handles opening a pinned item from the popup.
  */
 async function openPin(pin: PinItem): Promise<void> {
+  if (!isSafeDriveUrl(pin.url)) {
+    return;
+  }
+
   if (activeTab?.url && activeTab.url.includes('drive.google.com') && (pin.type === 'folder' || pin.type === 'shared-drive')) {
     // If user is already on Drive, navigate current tab
     await chrome.tabs.update(activeTab.id!, { url: pin.url });

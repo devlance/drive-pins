@@ -4,7 +4,7 @@ import { getAccountFromUrl } from '../utils/account';
 import { ICONS, getItemIcon } from '../utils/icons';
 import { PinModal } from './pin-modal';
 import { showToast } from './menu-pin-item';
-import { cleanTitle } from '../utils/dom';
+import { cleanTitle, isSafeDriveUrl } from '../utils/dom';
 
 const CONTAINER_ID = 'drive-pins-sidebar-container';
 
@@ -255,24 +255,48 @@ export class SidebarPinnedSection {
       flex: '1',
     });
 
-    // Icon (Emoji or SVG)
-    let iconHtml = '';
+    // Icon (Emoji or SVG) — built safely with DOM APIs to prevent XSS
+    const dragSpan = document.createElement('span');
+    dragSpan.className = 'drag-handle';
+    dragSpan.title = 'Drag to reorder';
+    Object.assign(dragSpan.style, {
+      display: 'flex',
+      alignItems: 'center',
+      color: '#747775',
+      cursor: 'grab',
+      flexShrink: '0',
+    });
+    dragSpan.innerHTML = ICONS.dragHandle;
+
+    const iconWrap = document.createElement('span');
+    Object.assign(iconWrap.style, {
+      display: 'flex',
+      alignItems: 'center',
+      flexShrink: '0',
+    });
     if (pin.emoji) {
-      iconHtml = `<span style="font-size: 16px; line-height: 1; flex-shrink: 0;">${pin.emoji}</span>`;
+      iconWrap.style.fontSize = '16px';
+      iconWrap.style.lineHeight = '1';
+      iconWrap.textContent = pin.emoji;
     } else {
-      iconHtml = `<span style="display: flex; align-items: center; flex-shrink: 0;">${getItemIcon(pin.type, pin.mimeType, pin.color, pin.title, pin.url)}</span>`;
+      iconWrap.innerHTML = getItemIcon(pin.type, pin.mimeType, pin.color, pin.title, pin.url);
     }
 
     const titleText = pin.aliasTitle || cleanTitle(pin.title);
-    leftContent.innerHTML = `
-      <span class="drag-handle" style="display: flex; align-items: center; color: #747775; cursor: grab; flex-shrink: 0;" title="Drag to reorder">
-        ${ICONS.dragHandle}
-      </span>
-      ${iconHtml}
-      <span style="font-size: 13px; font-weight: 400; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${titleText}">
-        ${titleText}
-      </span>
-    `;
+    const titleSpan = document.createElement('span');
+    titleSpan.title = titleText;
+    titleSpan.textContent = titleText;
+    Object.assign(titleSpan.style, {
+      fontSize: '13px',
+      fontWeight: '400',
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+      whiteSpace: 'nowrap',
+    });
+
+    leftContent.appendChild(dragSpan);
+    leftContent.appendChild(iconWrap);
+    leftContent.appendChild(titleSpan);
 
     // Click handler for navigation
     leftContent.addEventListener('click', (e) => {
@@ -361,6 +385,11 @@ export class SidebarPinnedSection {
    * Handles navigation: Folders/Shared Drives navigate in-place; Files open in a new tab.
    */
   private handlePinNavigation(pin: PinItem): void {
+    if (!isSafeDriveUrl(pin.url)) {
+      showToast('Blocked navigation to invalid URL');
+      return;
+    }
+
     if (pin.type === 'folder' || pin.type === 'shared-drive') {
       const tempLink = document.createElement('a');
       tempLink.href = pin.url;
@@ -375,7 +404,7 @@ export class SidebarPinnedSection {
         }
       }, 200);
     } else {
-      window.open(pin.url, '_blank');
+      window.open(pin.url, '_blank', 'noopener,noreferrer');
     }
   }
 

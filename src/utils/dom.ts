@@ -13,6 +13,21 @@ export interface ExtractedDriveItem {
 const DRIVE_ID_REGEX = /^[a-zA-Z0-9_-]{15,60}$/;
 
 /**
+ * Validates that a URL is an HTTPS Google Drive or Google Docs/Sheets/Slides/Forms URL.
+ */
+export function isSafeDriveUrl(url: string): boolean {
+  try {
+    const parsed = new URL(url);
+    return (
+      parsed.protocol === 'https:' &&
+      (parsed.hostname === 'drive.google.com' || parsed.hostname === 'docs.google.com')
+    );
+  } catch {
+    return false;
+  }
+}
+
+/**
  * Extracts Drive ID from a URL or string.
  */
 export function extractDriveId(str: string): string | null {

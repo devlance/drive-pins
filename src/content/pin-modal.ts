@@ -66,7 +66,7 @@ export class PinModal {
       <label style="display: block; font-size: 12px; font-weight: 500; color: #444746; margin-bottom: 6px;">
         Display Name (Alias)
       </label>
-      <input type="text" id="pin-alias-input" value="${displayTitle}" style="
+      <input type="text" id="pin-alias-input" style="
         width: 100%;
         box-sizing: border-box;
         padding: 10px 12px;
@@ -76,8 +76,12 @@ export class PinModal {
         outline: none;
         transition: border-color 0.2s;
       " />
-      <div style="font-size: 11px; color: #747775; margin-top: 4px;">Original: ${origTitle}</div>
+      <div id="pin-original-title" style="font-size: 11px; color: #747775; margin-top: 4px;"></div>
     `;
+    const aliasInputEl = nameSection.querySelector<HTMLInputElement>('#pin-alias-input');
+    if (aliasInputEl) aliasInputEl.value = displayTitle;
+    const origTitleEl = nameSection.querySelector<HTMLElement>('#pin-original-title');
+    if (origTitleEl) origTitleEl.textContent = `Original: ${origTitle}`;
 
     // Emoji Picker
     const emojiSection = document.createElement('div');
