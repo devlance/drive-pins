@@ -1,0 +1,16 @@
+{
+  "name": "drive-pins",
+  "version": "1.0.0",
+  "description": "Chrome extension to pin folders, shared drives, and files in Google Drive",
+  "scripts": {
+    "icons": "node scripts/generate-icons.js",
+    "build": "npm run icons && node scripts/build.js",
+    "typecheck": "tsc --noEmit",
+    "package": "npm run build && (cd dist && zip -r ../drive-pins-v1.0.0.zip .) && echo 'Package created at drive-pins-v1.0.0.zip'"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.308",
+    "typescript": "^5.8.0",
+    "vite": "^6.2.0"
+  }
+}

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Drive Pins</title>
+  <link rel="stylesheet" href="./popup.css">
+</head>
+<body>
+  <div class="popup-container">
+    <!-- Header -->
+    <header class="popup-header">
+      <div class="header-branding">
+        <img src="icons/icon-32.png" alt="Drive Pins" class="header-logo">
+        <h1 class="header-title">Drive Pins</h1>
+      </div>
+      <div class="account-selector-container">
+        <select id="account-select" class="account-select" title="Switch Google Account">
+          <option value="u0">Account 1 (Default)</option>
+          <option value="u1">Account 2</option>
+          <option value="u2">Account 3</option>
+        </select>
+      </div>
+    </header>
+
+    <!-- Pin Current Action Bar -->
+    <div class="action-bar">
+      <button id="pin-current-btn" class="btn btn-primary" type="button">
+        <span class="btn-icon">📌</span>
+        <span class="btn-text">Pin Current Page</span>
+      </button>
+    </div>
+
+    <!-- Search Input -->
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="search-input" placeholder="Search pins..." autocomplete="off">
+      <button id="search-clear-btn" class="search-clear-btn" type="button" style="display: none;">&times;</button>
+    </div>
+
+    <!-- Pinned Items List -->
+    <main class="pins-list-container">
+      <div id="pins-list" class="pins-list">
+        <!-- Rendered dynamically -->
+      </div>
+      <div id="empty-state" class="empty-state" style="display: none;">
+        <div class="empty-icon">📌</div>
+        <p class="empty-title">No pinned items yet</p>
+        <p class="empty-desc">Open Google Drive and click the pin icon on any file or folder to add it here.</p>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="popup-footer">
+      <span id="pin-count" class="pin-count">0 pins</span>
+      <a href="https://drive.google.com" target="_blank" rel="noreferrer" class="open-drive-link">
+        Open Google Drive ↗
+      </a>
+    </footer>
+  </div>
+
+  <script type="module" src="./popup.ts"></script>
+</body>
+</html>
